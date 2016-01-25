@@ -26,8 +26,6 @@ readFiles.extend( [
     "file:/tmp/meridian/myMicroAODOutputFile.root"
 ] )
 
-
-
 process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string(options.outputFile))
 
@@ -87,7 +85,7 @@ variables=["pt := pt",
            "hadTowOverEm := hadTowOverEm",
            
            ## "idMVA := phoIdMvaWrtChosenVtx",
-           "genIso := ? hasMatchedGenPhoton ? userFloat('genIso') : -1", 
+           #"genIso := ? hasMatchedGenPhoton ? userFloat('genIso') : -1", 
            ## "etrue := ? hasMatchedGenPhoton ? matchedGenPhoton.energy : 0",
            "sieie := sigmaIetaIeta",
            "r9 := r9",
@@ -133,7 +131,7 @@ cfgTools.addCategory(process.photonDumper,
                      "Reject",
                      "   abs(superCluster.eta)>=1.4442&&abs(superCluster.eta)<=1.566 "
                      "|| abs(superCluster.eta)>=2.5 "
-                     "|| pt<75",
+                     "|| pt<20",
                      -1 ## if nSubcat is -1 do not store anythings
                      )
 
@@ -142,8 +140,8 @@ cfgTools.addCategories(process.photonDumper,
                        ## categories definition
                        ## cuts are applied in cascade. Events getting to these categories have already failed the "Reject" selection
                        [
-                           ("prompt","genMatchType == 1",0),
-                           ("fakes",  "genMatchType != 1",0),
+                           ("genEle", "matchedElectron == 1", 0)
+#                           ("fakes",  "genMatchType != 1",0),
                         ],
                        ## variables to be dumped in trees/datasets. Same variables for all categories
                        ## if different variables wanted for different categories, can add categorie one by one with cfgTools.addCategory
