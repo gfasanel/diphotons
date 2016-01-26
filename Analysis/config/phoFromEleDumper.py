@@ -86,7 +86,7 @@ variables=["pt := pt",
            
            ## "idMVA := phoIdMvaWrtChosenVtx",
            #"genIso := ? hasMatchedGenPhoton ? userFloat('genIso') : -1", 
-           ## "etrue := ? hasMatchedGenPhoton ? matchedGenPhoton.energy : 0",
+           "etrue := ? hasMatchedGenElectron ? matchedGenElectron.energy : 0",
            "sieie := sigmaIetaIeta",
            "r9 := r9",
            "esEffSigmaRR := esEffSigmaRR",
@@ -96,6 +96,9 @@ variables=["pt := pt",
            "egChargedHadronIso := egChargedHadronIso" ,
            "egNeutralHadronIso := egNeutralHadronIso",
            "egPhotonIso := egPhotonIso" ,
+
+           "electronMatched := matchedElectron",
+           "gsfTrackInnerMissingHits := matchedGsfTrackInnerMissingHits"
 
            ## "rndConeDeltaPhi := userFloat('rnd03_rndcone_deltaphi')",
            ## "fprRndConeDeltaPhi := userFloat('fprRnd03_rndcone_deltaphi')",
@@ -140,7 +143,8 @@ cfgTools.addCategories(process.photonDumper,
                        ## categories definition
                        ## cuts are applied in cascade. Events getting to these categories have already failed the "Reject" selection
                        [
-                           ("genEle", "matchedElectron == 1", 0)
+                           ("genEle", "hasMatchedGenElectron == 1", 0),
+                           ("eleFakes", "hasMatchedGenElectron != 1 && genMatchType != 1", 0)
 #                           ("fakes",  "genMatchType != 1",0),
                         ],
                        ## variables to be dumped in trees/datasets. Same variables for all categories
