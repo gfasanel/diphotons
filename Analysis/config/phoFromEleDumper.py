@@ -23,7 +23,7 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 readFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles)
 readFiles.extend( [
-    "file:/tmp/meridian/myMicroAODOutputFile.root"
+    "/store/user/spigazzi/flashgg/diphotons0T/1_2_0-59-gf9783cd/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T-1_2_0-59-gf9783cd-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160125_220006/0000/myMicroAODOutputFile_1.root"
 ] )
 
 process.TFileService = cms.Service("TFileService",
