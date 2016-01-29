@@ -9,10 +9,9 @@ options = VarParsing('analysis')
 
 # maxEvents is the max number of events processed of each file, not globally
 options.maxEvents = -1
-options.inputFiles = ""
-options.outputFile = "quickDump.root"
-#options.phoFromEle = 1
-options.parseArguments()
+options.inputFiles = "file:diphotonsMicroAOD.root"
+options.outputFile = "output.root"
+#options.parseArguments()
 
 process = cms.Process("Analysis")
 
@@ -25,16 +24,20 @@ process.source = cms.Source ("PoolSource",fileNames = readFiles)
 #else:
 readFiles.extend( [
 #        "/store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/GJet_Pt-15to6000_TuneCUETP8M1_Flat_13TeV_pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIIFall15MiniAODv2-PU25nsData2015v1_magnetOff_76X_mcRun2_asymptotic_v12-v1/160126_182325/0000/myMicroAODOutputFile_28.root"
-        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DoubleEG_0T/diphotons0T_v1-1_2_0-64-gbd0a265-v0-Run2015D-PromptReco-v4/160127_133942/0000/myMicroAODOutputFile_6.root"
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/160126_182325/0000/myMicroAODOutputFile_70.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/160126_182325/0000/myMicroAODOutputFile_71.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/160126_182325/0000/myMicroAODOutputFile_72.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/160126_182325/0000/myMicroAODOutputFile_73.root",
+#        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DoubleEG_0T/diphotons0T_v1-1_2_0-64-gbd0a265-v0-Run2015D-PromptReco-v4/160127_133942/0000/myMicroAODOutputFile_6.root"
 #        "/store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-95-g1f8972a/DoubleEG_0T/diphotons0T_v1-1_2_0-95-g1f8972a-v0-Run2015D-PromptReco-v4/160126_181028/0000/myMicroAODOutputFile_286.root"
         ] )
-
-
+# process.source = cms.Source ("PoolSource",
+#                              fileNames = cms.untracked.vstring(options.inputFiles))
 
 process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string(options.outputFile))
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 10000 )
 
 ## from flashgg.MicroAOD.flashggPreselectedDiPhotons_cfi import flashggPreselectedDiPhotons
@@ -87,6 +90,7 @@ variables=["pt := pt",
            "nTrkHollow := nTrkHollowConeDR03",
            "hcalTowerSumEtConeDR03 := hcalTowerSumEtConeDR03",
            "trkSumPtHollowConeDR03 := trkSumPtHollowConeDR03",
+           "trackMissingHits := matchedGsfTrackInnerMissingHits",
            "hadTowOverEm := hadTowOverEm",
            
            ## "idMVA := phoIdMvaWrtChosenVtx",
@@ -176,5 +180,6 @@ process.p1 = cms.Path(
 ## process.e = cms.EndPath(process.out)
 
 from diphotons.MetaData.JobConfig import customize
+customize.setDefault("maxEvents", 500)
 customize(process)
 

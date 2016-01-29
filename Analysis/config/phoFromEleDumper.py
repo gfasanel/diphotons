@@ -23,7 +23,16 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 readFiles = cms.untracked.vstring()
 process.source = cms.Source ("PoolSource",fileNames = readFiles)
 readFiles.extend( [
-    "/store/user/spigazzi/flashgg/diphotons0T/1_2_0-59-gf9783cd/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T-1_2_0-59-gf9783cd-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160125_220006/0000/myMicroAODOutputFile_1.root"
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_250.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_251.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_252.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_253.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_254.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_255.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_256.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_257.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_258.root",
+        "root://xrootd-cms.infn.it//store/user/spigazzi/flashgg/diphotons0T_v1/1_2_0-64-gbd0a265/DYToEE_NNPDF30_13TeV-powheg-pythia8/diphotons0T_v1-1_2_0-64-gbd0a265-v0-RunIISpring15DR74-0TPU25nsData2015v1_magnetOffBS0T_74X_mcRun2_0T_v0-v2/160127_134011/0000/myMicroAODOutputFile_259.root"
 ] )
 
 process.TFileService = cms.Service("TFileService",
