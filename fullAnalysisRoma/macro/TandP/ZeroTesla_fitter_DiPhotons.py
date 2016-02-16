@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
 
 process = cms.Process("TagProbe")
 process.source = cms.Source("EmptySource")
@@ -8,16 +9,34 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
+### SETUP OPTIONS                                                                                                                   
+options = VarParsing.VarParsing('standard')
+options.register('isMC',
+                 0, # default Value = false --> you are running on data
+                 VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                 VarParsing.VarParsing.varType.int,          # string, int, or float 
+                 "force MC: isMC=1 if you are running on MC")
+options.parseArguments()
+
+isMC = options.isMC
+
+
 ################################################
-InputFileName = "../DYToEE_NNPDF30_powheg.root"
-#InputFileName ="../SingleEle_0T_RunDv4.root"
-OutputFilePrefix = "efficiency-mc-"
-#OutputFilePrefix = "efficiency-data-"
+if(isMC):
+    InputFileName = "../DYToEE_NNPDF30_powheg.root"
+else:
+    InputFileName ="../SingleEle_0T_RunDv4.root"
+
+if(isMC):
+    OutputFilePrefix = "efficiency-mc-"
+else:
+    OutputFilePrefix = "efficiency-data-"
+
 PDFName = "pdfSignalPlusBackground"
 
 ################################################
 #specifies the binning of parameters
-EfficiencyBins = cms.PSet(probe_Pho_et = cms.vdouble( 25, 35, 45, 60 ,100, 200, 300 ),
+EfficiencyBins = cms.PSet(probe_Pho_et = cms.vdouble( 25, 35, 45, 60 , 500 ),
                           probe_Pho_abseta = cms.vdouble( 0.0, 1.5 , 2.5 ),
                           )
 
@@ -41,8 +60,6 @@ mcTruthModules = cms.PSet(
 ############################################################################################
 process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                          InputFileNames = cms.vstring(InputFileName),
-                                         #InputDirectoryName = cms.string("tnpAna"),
-                                         #InputTreeName = cms.string("TaPTree"), 
                                          InputDirectoryName = cms.string("PhotonToRECO"),
                                          InputTreeName = cms.string("fitter_tree"), 
                                          OutputFileName = cms.string(OutputFilePrefix+"FullSel.root"),
@@ -51,11 +68,7 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                          doCutAndCount = cms.bool(True),
                                          floatShapeParameters = cms.bool(True),
                                          binnedFit = cms.bool(True),
-                                         binsForFit = cms.uint32(40),            # 20-200 EB  
-                                         #binsForFit = cms.uint32(30),            # 200-350 EB
-                                         #binsForFit = cms.uint32(20),            # >=350 EB
-                                         #binsForFit = cms.uint32(40),            # 20-110 EE  
-                                         #binsForFit = cms.uint32(25),            # >=110 EE  
+                                         binsForFit = cms.uint32(40),         
                                          #WeightVariable = cms.string("pu_weight"),
                                          ##WeightVariable = cms.string("PUWeight"),
                                          
@@ -78,29 +91,13 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                          PDFs = cms.PSet(pdfSignalPlusBackground = cms.vstring(
 
             # Free fit to fix N in EB
-            "RooCBExGaussShape::signalResPass(mass,meanP[0.0,-1.,1.],sigmaP[1.,0.01,3.1],alphaP[1.,0.01,5.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",    # 20-30
-            #"RooCBExGaussShape::signalResPass(mass,meanP[0.0,-1.,1.],sigmaP[2.,0.01,3.1],alphaP[1.,0.01,5.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",    # 30-350
-            #"RooCBExGaussShape::signalResPass(mass,meanP[0.0,-2.,2.],sigmaP[1.,0.01,3.1],alphaP[1.,0.01,5.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",    # >350
-            "RooCBExGaussShape::signalResFail(mass,meanF[0.0,-1.,1.],sigmaF[3.,0.01,2.],alphaF[1.,0.,5.0],nF[3,0.01,25.0],sigmaF_2[1.,0.001,15.000])",         # 20-40
-            #"RooCBExGaussShape::signalResFail(mass,meanF[0.0,-1.,3.],sigmaF[3.,0.01,2.],alphaF[1.,0.,5.0],nF[3,0.01,25.0],sigmaF_2[1.,0.001,10.000])",         # 40-50
-            #"RooCBExGaussShape::signalResFail(mass,meanF[1.2,-0.5,3.],sigmaF[1.,0.01,5],alphaF[2.,0.01,8.0],nF[3,0.01,25.0],sigmaF_2[1.,0.001,5.000])",        # 50-60
-            #"RooCBExGaussShape::signalResFail(mass,meanF[1.2,-2.,3.],sigmaF[1.,0.01,5],alphaF[2.,0.01,8.0],nF[3,0.01,25.0],sigmaF_2[1.,0.001,5.000])",         # 60-150
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-1.5,-3.,-0.5],sigmaF[1.,0.01,5],alphaF[2.,0.01,8.0],nF[3,0.01,25.0],sigmaF_2[1.,0.001,3.000])",      # 150-350
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-0.5,-3.,0.5],sigmaF[1.,0.01,5],alphaF[2.,0.01,8.0],nF[3,0.01,10.0],sigmaF_2[1.,0.001,3.000])",       # >350
-
             # Free fit to fix N in EE
-            #"RooCBExGaussShape::signalResPass(mass,meanP[0.0,-5.,5.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     # 20-30 
-            #"RooCBExGaussShape::signalResPass(mass,meanP[0.0,-5.,5.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.01,15.00])",    # 30-50 
-            #"RooCBExGaussShape::signalResPass(mass,meanP[-0.5,-3.,1.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",    # 50-60
-            #"RooCBExGaussShape::signalResPass(mass,meanP[-0.5,-3.,0.5],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",   # 60-
-            #"RooCBExGaussShape::signalResFail(mass,meanF[0.0,-5.,5.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,15.000])",          # 20-30
-            #"RooCBExGaussShape::signalResFail(mass,meanF[0.0,-5.,5.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,15.000])",          # 30-50 
-            #"RooCBExGaussShape::signalResFail(mass,meanF[1.,-1.,2.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,15.000])",           # 50-60 
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-0.5,-2.,0.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,15.000])",         # 60-150
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-1.5,-2.,-1.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,15.000])",         # 150-500 
-            
+            #"RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-3.,2.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     # 20-30 
+            #"RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-3.,2.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,15.000])",          # 20-30
+            "RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
+            "RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,15.000])",          
+
             "ZGeneratorLineShape::signalPhy(mass)", ### NLO line shape
-            ##"RooExponential::signalPhy(mass,aPass[-0.1, -3., 0.])", ### try this one
 
             "RooExponential::backgroundPass(mass, aPass[-0.1, -3., 0.])",    
             "RooExponential::backgroundFail(mass, aFail[-0.1, -3., 0.1])",   
