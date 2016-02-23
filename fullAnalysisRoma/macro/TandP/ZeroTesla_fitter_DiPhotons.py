@@ -23,9 +23,13 @@ isMC = options.isMC
 
 ################################################
 if(isMC):
-    InputFileName = "../DYToEE_NNPDF30_powheg.root"
+    #InputFileName = "../DYToEE_NNPDF30_powheg.root"
+    InputFileName = "~/scratch1/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/tp_ntuples/DYToEE_NNPDF30_powheg_76_v2.root"
 else:
-    InputFileName ="../SingleEle_0T_RunDv4.root"
+    #InputFileName ="../SingleEle_0T_RunDv4.root"
+    #InputFileName = "~/scratch1/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/tp_ntuples/SingleEle_0T_RunD_76.root"
+    #InputFileName = "~/scratch1/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/tp_ntuples/SingleEle_0T_RunC_76.root"
+    InputFileName = "~/scratch1/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/tp_ntuples/SingleEle_0T_RunC_D_76.root"
 
 if(isMC):
     OutputFilePrefix = "efficiency-mc-"
@@ -36,23 +40,29 @@ PDFName = "pdfSignalPlusBackground"
 
 ################################################
 #specifies the binning of parameters
-EfficiencyBins = cms.PSet(probe_Pho_et = cms.vdouble( 25, 35, 45, 60 , 500 ),
+EfficiencyBins = cms.PSet(probe_Pho_et = cms.vdouble( 25, 35, 45, 60 , 100, 500 ),
                           probe_Pho_abseta = cms.vdouble( 0.0, 1.5 , 2.5 ),
                           )
 
-EfficiencyBinningSpecificationMC = cms.PSet(
-    #UnbinnedVariables = cms.vstring("mass", "pu_weight"),                 # NB: using pu_weight only 1) not to have too small weights 2) to use the mc statistical error
-    UnbinnedVariables = cms.vstring("mass"),
-    BinnedVariables = cms.PSet(EfficiencyBins,
-                               ),
-    BinToPDFmap = cms.vstring(PDFName)  
-)
-
+if(isMC):
+    EfficiencyBinningSpecificationMC = cms.PSet(
+        UnbinnedVariables = cms.vstring("mass", "PUweight"),
+        BinnedVariables = cms.PSet(EfficiencyBins,
+                                   ),
+        BinToPDFmap = cms.vstring(PDFName)  
+        )
+else:
+    EfficiencyBinningSpecificationMC = cms.PSet(
+        UnbinnedVariables = cms.vstring("mass"),
+        BinnedVariables = cms.PSet(EfficiencyBins,
+                                   ),
+        BinToPDFmap = cms.vstring(PDFName)  
+        )
+    
 ############################################################################################
 mcTruthModules = cms.PSet(
     MCtruth = cms.PSet(EfficiencyBinningSpecificationMC,
                        EfficiencyCategoryAndState = cms.vstring("passingSel", "pass"),
-                       #EfficiencyCategoryAndState = cms.vstring("passingSel", "pass"),
                        ),
     )
 
@@ -69,17 +79,13 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                          floatShapeParameters = cms.bool(True),
                                          binnedFit = cms.bool(True),
                                          binsForFit = cms.uint32(40),         
-                                         #WeightVariable = cms.string("pu_weight"),
-                                         ##WeightVariable = cms.string("PUWeight"),
+                                         WeightVariable = cms.string("PUweight"),
                                          
                                          # defines all the real variables of the probes available in the input tree and intended for use in the efficiencies
                                          Variables = cms.PSet(mass = cms.vstring("Tag-Probe Mass", "70.0", "110.0", "GeV/c^{2}"),
-                                                              #probe_pt = cms.vstring("Probe E_{T}", "0", "500", "GeV/c"),
-                                                              #probe_absEta = cms.vstring("Probe #eta", "0", "2.5", ""), 
-                                                              #pu_weight = cms.vstring("PU weight only", "-1000", "1000", ""),
                                                               probe_Pho_et = cms.vstring("Probe E_{T}", "0", "500", "GeV/c"),
                                                               probe_Pho_abseta = cms.vstring("Probe #eta", "0", "2.5", ""), 
-                                                              ##PUWeight = cms.vstring("PU weight only", "-1000", "1000", ""),
+                                                              PUweight = cms.vstring("PU weight", "-1000", "1000", ""),
                                                               ),
 
                                          # defines all the discrete variables of the probes available in the input tree and intended for use in the efficiency calculations
@@ -91,11 +97,11 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                          PDFs = cms.PSet(pdfSignalPlusBackground = cms.vstring(
 
             # Free fit to fix N in EB
-            # Free fit to fix N in EE
-            #"RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-3.,2.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     # 20-30 
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-3.,2.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,15.000])",          # 20-30
-            "RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,5.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
-            "RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,15.000])",          
+            #The best I could do for MC
+            #"RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
+            #"RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,4.000])",          
+            "RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
+            "RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,4.000])",          
 
             "ZGeneratorLineShape::signalPhy(mass)", ### NLO line shape
 
@@ -113,7 +119,6 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
                                                                  )
 
                                          )
-
 
 
 process.fit = cms.Path(

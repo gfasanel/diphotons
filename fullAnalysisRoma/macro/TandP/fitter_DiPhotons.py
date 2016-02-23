@@ -9,7 +9,8 @@ process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 ################################################
-InputFileName = "/afs/cern.ch/work/c/crovelli/public/TaP_spring15_7415v2/topup/formattedZ/Formatted_DYLL_all__1pb.root"
+#InputFileName = "/afs/cern.ch/work/c/crovelli/public/TaP_spring15_7415v2/topup/formattedZ/Formatted_DYLL_all__1pb.root"
+InputFileName = "../Formatted_DYToEE_NNPDF30_powheg.root"
 OutputFilePrefix = "efficiency-mc-fullSel"
 PDFName = "pdfSignalPlusBackground"
 
@@ -89,6 +90,7 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
             #"RooCBExGaussShape::signalResFail(mass,meanF[-1.5,-2.,-1.],sigmaF[3.,0.01,5.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,15.000])",         # 150-500 
             
             "ZGeneratorLineShape::signalPhy(mass)", ### NLO line shape
+            ##"RooExponential::signalPhy(mass,aPass[-0.1, -3., 0.])", ### try this one
 
             "RooExponential::backgroundPass(mass, aPass[-0.1, -3., 0.])",    
             "RooExponential::backgroundFail(mass, aFail[-0.1, -3., 0.1])",   
