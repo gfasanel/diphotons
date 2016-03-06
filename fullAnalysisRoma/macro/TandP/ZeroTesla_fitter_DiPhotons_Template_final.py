@@ -102,6 +102,14 @@ mcTruthModules = cms.PSet(
                        ),
     )
 
+if(isMC==0):
+    if ptMin<110:
+        sigmaVar="sigma[1.,0.5,2.5]"
+    else:
+        sigmaVar="sigma[0.5]" if etaMax==1.5 else "sigma[1.3]"
+else:
+    sigmaVar="sigma[1.,0.5,2.5]"
+
 ##mcTruthModules = cms.PSet()
 ############################################################################################
 process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
@@ -131,22 +139,9 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
 
                                          # defines all the PDFs that will be available for the efficiency calculations; 
                                          PDFs = cms.PSet(pdfSignalPlusBackground = cms.vstring(
-            #It works good for data (not bin0) and ~MC
-            #"RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-            #"RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
 
-            #It works for bin0, but not for the other ones
-            #"RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.5,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-            #"RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[0.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
-
-            "RooGaussian::signalResPass(mass,meanP[-2.5,-5.,5.],sigma[1.,0.5,2.5])",     
-            #"RooGaussian::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[0.5,0.01,4.0])",          
-            "RooGaussian::signalResFail(mass,meanF[-2.5,-5.,5.],sigma[1.,0.5,2.5])",          
-           
-            #"RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-            #"RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[0.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
-
-            #"ZGeneratorLineShape::signalPhy(mass)", ### NLO line shape
+            "RooGaussian::signalResPass(mass,meanP[-2.5,-5.,5.],"+sigmaVar+")",     
+            "RooGaussian::signalResFail(mass,meanF[-2.5,-5.,5.],"+sigmaVar+")",          
             "ZGeneratorLineShape::signalPhyPass(mass,\"/afs/cern.ch/work/g/gfasanel/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/MCtemplates.root\", \"hMass_"+str(etaMin).split(".0")[0]+"_"+str(etaMax).split(".0")[0]+"_"+str(ptMin).split(".0")[0]+"_"+str(ptMax).split(".0")[0]+"_Pass\")",
             "ZGeneratorLineShape::signalPhyFail(mass,\"/afs/cern.ch/work/g/gfasanel/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/MCtemplates.root\", \"hMass_"+str(etaMin).split(".0")[0]+"_"+str(etaMax).split(".0")[0]+"_"+str(ptMin).split(".0")[0]+"_"+str(ptMax).split(".0")[0]+"_Fail\")",
 
@@ -158,48 +153,6 @@ process.GsfElectronToId = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
             "efficiency[0.5,0,1]",
             "signalFractionInPassing[0.9,0,1]"     
 
-
-            #"RooGaussian::signalResPass(mass, meanP[1.5,-5.000,5.000],sigmaP[0.956,0.00,5.000])",
-            #"RooGaussian::signalResFail(mass, meanF[1.5,-5.000,5.000],sigmaF[2,0.00,5.000])",
-            #"ZGeneratorLineShape::signalPhyPass(mass,\"/afs/cern.ch/work/g/gfasanel/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/MCtemplates.root\", \"hMass_"+str(etaMin).split(".0")[0]+"_"+str(etaMax).split(".0")[0]+"_"+str(ptMin).split(".0")[0]+"_"+str(ptMax).split(".0")[0]+"_Pass\")",
-            #"ZGeneratorLineShape::signalPhyFail(mass,\"/afs/cern.ch/work/g/gfasanel/Test_7_6/CMSSW_7_6_3/src/flashgg/Validation/test/MCtemplates.root\", \"hMass_"+str(etaMin).split(".0")[0]+"_"+str(etaMax).split(".0")[0]+"_"+str(ptMin).split(".0")[0]+"_"+str(ptMax).split(".0")[0]+"_Fail\")",
-            #
-            #"RooExponential::backgroundPass(mass, aPass[-0.1, -3., 0.])",
-            #"RooExponential::backgroundFail(mass, aFail[-0.1, -3., 0.1])",
-            ##"RooCMSShape::backgroundPass(mass, alphaPass[60.,50.,70.], betaPass[0.001, 0.,0.1], gammaPass[0.1, 0, 1], peakPass[90.0])",
-            ##"RooCMSShape::backgroundFail(mass, alphaFail[60.,50.,70.], betaFail[0.001, 0.,0.1], gammaFail[0.1, 0, 1], peakFail[90.0])",
-            #"FCONV::signalPass(mass, signalPhyPass, signalResPass)",
-            #"FCONV::signalFail(mass, signalPhyFail, signalResFail)",     
-            #"efficiency[0.5,0,1]",
-            #"signalFractionInPassing[1.0]"     
-
-
-            # Free fit to fix N in EB
-            #The best I could do for MC
-            #"RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.,5.0],nF[3,0.1,10.0],sigmaF_2[1.,0.001,4.000])",          
-            #"RooCBExGaussShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.01,50.0],nP[2.,0.1,50.000],sigmaP_2[1.000,0.1,15.00])",     
-            #"RooCBExGaussShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.,5.0],nF[3,0.1,50.0],sigmaF_2[1.,0.001,4.000])",          
-           
-            #It works good for data (not bin0) and ~MC
-#            "RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-#            "RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[1.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
-#
-#            #It works for bin0, but not for the other ones
-#            #"RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.5,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-#            #"RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[0.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
-#            #"RooCBShape::signalResPass(mass,meanP[-2.5,-5.,5.],sigmaP[1.,0.01,4.0],alphaP[1.,0.5,50.0],nP[2.,0.1,50.000])",     
-#            #"RooCBShape::signalResFail(mass,meanF[-2.5,-5.,5.],sigmaF[0.5,0.01,4.0],alphaF[1.,0.5,5.0],nF[3,0.1,50.0])",          
-#
-#            "ZGeneratorLineShape::signalPhy(mass)", ### NLO line shape
-#
-#            "RooExponential::backgroundPass(mass, aPass[-0.1, -3., 0.])",    
-#            "RooExponential::backgroundFail(mass, aFail[-0.1, -3., 0.1])",   
-#
-#            "FCONV::signalPass(mass, signalPhy, signalResPass)",
-#            "FCONV::signalFail(mass, signalPhy, signalResFail)",     
-#            "efficiency[0.5,0,1]",
-#            "signalFractionInPassing[0.9,0,1]"     
             ),
                                                          ),
 
